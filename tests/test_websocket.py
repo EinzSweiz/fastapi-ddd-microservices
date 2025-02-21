@@ -5,7 +5,7 @@ import websockets
 
 @pytest.mark.asyncio
 async def test_websocket_connection():
-    url = "ws://localhost:8002/ws"
+    url = "ws://web:8002/ws"
 
     async with websockets.connect(url) as websocket:
         message = {"event": "create", "name": "NEW", "description": "NEW", "stock": 2, "price": 1}
