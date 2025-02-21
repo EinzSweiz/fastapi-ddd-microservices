@@ -1,25 +1,29 @@
 import pytest
 import json
-from fastapi.testclient import TestClient
-from app.main import app
+import asyncio
+import websockets
 
 @pytest.mark.asyncio
-async def test_websocket(create_inventory):
-    inventory = create_inventory
-    inventory_json = inventory.json()
+async def test_websocket_connection():
+    url = "ws://localhost:8002/ws"
 
-    client = TestClient(app)
-    async with client.websocket_connect("/ws") as websocket:
-        message = json.dumps({
-            "event": "decrease_stock",
-            "product_id": inventory_json["product_id"],
-            "quantity": 2
-        })
-        await websocket.send_text(message)
+    async with websockets.connect(url) as websocket:
+        message = {"event": "create", "name": "NEW", "description": "NEW", "stock": 2, "price": 1}
+        await websocket.send(json.dumps(message))
 
-        # ✅ Receive response
-        response = await websocket.receive_text()
-        print(f"WebSocket Response: {response}")
+        response = await websocket.recv()
 
-        # ✅ Ensure WebSocket closes after response
-        assert "message" in response
+        # Parse the received message
+        actual_data = json.loads(response)['data']
+
+        expected_data = {
+            "name": "NEW",
+            "description": "NEW",
+            "stock": 2,
+            "price": 1
+        }
+
+        actual_data.pop('created_at', None)
+        actual_data.pop('product_id', None)
+
+        assert actual_data == expected_data
