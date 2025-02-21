@@ -42,9 +42,15 @@ jobs:
           docker-compose -f docker-compose.yaml build
           docker-compose -f docker-compose.yaml up -d
 
-      - name: Wait for WebSocket service to be ready
+      - name: Debug Running Containers
+        run: docker ps -a
+
+      - name: Check WebSocket Logs
+        run: docker-compose logs web
+
+      - name: Wait for WebSocket inside Docker (Timeout 30s)
         run: |
-          docker-compose exec -T web /bin/bash -c "until nc -z localhost 8002; do sleep 1; done"
+          timeout 30 sh -c 'until nc -z 0.0.0.0 8002; do sleep 1; done' || (echo "WebSocket service failed to start!" && exit 1)
 
       - name: Run tests
         run: |
