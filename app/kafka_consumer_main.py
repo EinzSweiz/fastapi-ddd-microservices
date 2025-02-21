@@ -5,7 +5,6 @@ from app.infastructure.kafka_inventory_consumer import KafkaConsumerService
 from app.services.inventory_service import InventoryService
 from app.infastructure.repositories.inventory_repository import InventoryRepository
 from app.infastructure.database import get_db
-from app.websocket.websocket_manager import ws_manager
 
 async def run_consumer():
     """Initialize Kafka Consumer independently from FastAPI"""
@@ -16,7 +15,9 @@ async def run_consumer():
     inventory_service = InventoryService(repository=repository)
     # Get consumer group dynamically from environment variable
     consumer_group = os.getenv("CONSUMER_GROUP", "inventory-group-default")
-    kafka_consumer = KafkaConsumerService(inventory_service=inventory_service, consumer_group=consumer_group, ws_manager=ws_manager)
+    kafka_consumer = KafkaConsumerService(inventory_service=inventory_service, consumer_group=consumer_group)
+
+    await kafka_consumer.setup_redis()
 
     await kafka_consumer.consume_messages()
 

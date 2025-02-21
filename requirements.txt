@@ -16,8 +16,7 @@ pytest-asyncio
 
 
 #redis
-redis
-redis-py-cluster
+redis>=4.2.0
 
 
 #RabbitMQTESTING

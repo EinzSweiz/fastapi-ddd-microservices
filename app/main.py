@@ -7,8 +7,11 @@ from app.infastructure.kafka_topics import KafkaTopicManager
 from app.infastructure.database import get_db
 from app.services.inventory_service import InventoryService
 from app.websocket.websocket_service import websocket_router
+from app.websocket.websocket_manager import ws_manager
 from app.infastructure.repositories.inventory_repository import InventoryRepository
 from fastapi.middleware.cors import CORSMiddleware
+
+logger = logging.getLogger(__name__)
 
 # async def wait_for_topic_ready(kafka_topic_manager: KafkaTopicManager, topic_name: str, retries: int = 10, backoff: float = 2.0):
 #     """Asynchronously wait for Kafka topic to be ready."""
@@ -62,9 +65,29 @@ from fastapi.middleware.cors import CORSMiddleware
 #         except asyncio.CancelledError:
 #             logging.info("Kafka Consumer stopped.")
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifecycle event: Start and cleanup resources."""
+    print("🚀 FastAPI Application is starting...")
+    logger.info("🚀 FastAPI Application is starting...")
+
+    # Start Redis Pub/Sub listener
+    task = asyncio.create_task(ws_manager.start_redis_listener())
+    
+    print("📡 Redis listener started!")
+    logger.info("📡 Redis listener started!")
+
+    yield  # Run the application
+
+    print("🛑 FastAPI Application is shutting down...")
+    logger.info("🛑 FastAPI Application is shutting down...")
+    
+    # Cleanup task on shutdown
+    task.cancel()
+
 
 # ✅ Initialize FastAPI with lifespan
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 # ✅ CORS Configuration (Adjust for production)
 app.add_middleware(

@@ -31,8 +31,11 @@ services:
     depends_on:
       - kafka
       - web
+      - redis-node-0
+      - kafka-admin
     networks:
       - config
+    restart: always
     env_file:
       - .env
     environment:

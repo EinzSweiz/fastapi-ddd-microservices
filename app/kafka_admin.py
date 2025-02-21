@@ -33,5 +33,5 @@ def create_kafka_topics():
         logging.info("All required topics already exist.")
 
 if __name__ == "__main__":
-    time.sleep(5)  # Ensure Kafka is ready
+    time.sleep(10)  # Ensure Kafka is ready
     create_kafka_topics()

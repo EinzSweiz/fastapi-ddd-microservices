@@ -2,7 +2,6 @@ from fastapi import WebSocket, APIRouter
 from app.infastructure.kafka_producer import KafkaProducerService
 from app.websocket.websocket_manager import ws_manager
 import json
-
 websocket_router = APIRouter(tags=['Websocket'])
 producer = KafkaProducerService()
 
@@ -21,10 +20,11 @@ async def websocket_endpoint(websocket: WebSocket):
             print(f"Sent event to Kafka: {event}")
 
             #Send immediate response back
-            await websocket.send_text(json.dumps({
-                "message": 'Event received and processed',
-                "data": event
-            }))
+            # await websocket.send_text(json.dumps({
+            #     "message": 'Event received and processed',
+            #     "data": event
+            # }))
+            
 
     except Exception as e:
         print(f"WebSocket Error: {e}")
