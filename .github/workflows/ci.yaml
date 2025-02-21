@@ -32,6 +32,10 @@ jobs:
           python -m venv venv
           . venv/bin/activate
           pip install -r requirements.txt
+      - name: Create .env file from secrets
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
 
       - name: Build Docker Image and Start Containers
         run: |
