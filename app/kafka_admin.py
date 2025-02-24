@@ -9,7 +9,9 @@ TOPICS = [
     "inventory.decrease_stock",
     "inventory.increase_stock",
     "inventory.create",
-    "inventory.fetch"
+    "inventory.fetch",
+    'order.get',
+    'order.create'
 ]
 
 def create_kafka_topics():

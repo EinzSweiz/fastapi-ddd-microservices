@@ -26,7 +26,7 @@ services:
     build:
       context: .
       dockerfile: app/Dockerfile
-    command: "python app/kafka_consumer_main.py"
+    command: "python app/kafka_consumer_inventory_main.py"
     container_name: kafka-consumer-1
     depends_on:
       - kafka
@@ -39,7 +39,26 @@ services:
     env_file:
       - .env
     environment:
-      - CONSUMER_GROUP=inventory-group-1
+      - CONSUMER_GROUP=inventory-consumer-group
+      - PYTHONPATH=/usr/src
+  kafka-consumer-2:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    command: "python app/kafka_consumer_order_main.py"
+    container_name: kafka-consumer-2
+    depends_on:
+      - kafka
+      - web
+      - redis-node-0
+      - kafka-admin
+    networks:
+      - config
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - CONSUMER_GROUP1=order-consumer-group
       - PYTHONPATH=/usr/src
   kafka-admin:
     build:

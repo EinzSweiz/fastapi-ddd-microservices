@@ -9,7 +9,7 @@ from app.infastructure.redis_client import redis_client
 
 logger = logging.getLogger(__name__)
 
-class KafkaConsumerService:
+class KafkaInventoryConsumerService:
     def __init__(self, inventory_service: InventoryService, consumer_group: str = "inventory-consumer-group"):
         self.inventory_service = inventory_service
         self.redis_pubsub = None

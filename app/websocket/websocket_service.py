@@ -15,7 +15,13 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             print(f"📩 Received WebSocket Message: {data}")
             event = json.loads(data)
-            topic = f"inventory.{event['event']}"
+            if event.get('type') == 'order':
+                topic = f'order.{event['event']}'
+            elif event.get('type') == 'inventory':
+                topic = f"inventory.{event['event']}"
+            else:
+                print("⚠️ Unknown event type, ignoring...")
+                continue
             producer.send_message(topic, event)
             print(f"Sent event to Kafka: {event}")
 

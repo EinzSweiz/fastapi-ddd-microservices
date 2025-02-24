@@ -4,6 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Annotated
 from fastapi import Depends
 from app.infastructure.database import get_db
+import datetime
 
 class OrderRepository:
     def __init__(self, db: Annotated[AsyncIOMotorDatabase, Depends(get_db)]):
@@ -19,6 +20,8 @@ class OrderRepository:
         if not data:
             raise OrderNotFoundException()
         data.pop('_id', None)
+        if isinstance(data.get('created_at'), str):
+            data['created_at'] = datetime.datetime.fromisoformat(data['created_at'])
         return Order(**data)
     
     async def update(self, order: Order):

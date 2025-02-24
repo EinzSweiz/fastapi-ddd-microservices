@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-node-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-node-2
+  template:
+    metadata:
+      labels:
+        app: redis-node-2
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: redis
+          image: redis:latest
+          command: ["redis-server", "--port", "7002", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000"]
+          ports:
+            - containerPort: 7002
+          volumeMounts:
+          - name: redis-data-2
+            mountPath: /data
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+      volumes:
+        - name: redis-data-2
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-node-2-service
+spec:
+  selector:
+    app: redis-node-2
+  ports:
+    - protocol: TCP
+      name: 'http'
+      port: 7002
+      targetPort: 7002

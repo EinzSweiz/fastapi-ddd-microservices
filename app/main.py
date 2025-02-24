@@ -2,13 +2,8 @@ import logging
 import asyncio
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from app.infastructure.kafka_inventory_consumer import KafkaConsumerService
-from app.infastructure.kafka_topics import KafkaTopicManager
-from app.infastructure.database import get_db
-from app.services.inventory_service import InventoryService
 from app.websocket.websocket_service import websocket_router
 from app.websocket.websocket_manager import ws_manager
-from app.infastructure.repositories.inventory_repository import InventoryRepository
 from fastapi.middleware.cors import CORSMiddleware
 
 logger = logging.getLogger(__name__)

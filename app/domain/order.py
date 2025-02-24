@@ -9,7 +9,7 @@ class Order:
     product_id: str
     status: str = "pending"
     paid: bool = False
-    created_at: datetime = field(default_factory=datetime.now)
+    created_at: datetime = field(default_factory=lambda: datetime.now())
     order_id: str = field(default_factory=lambda: str(uuid.uuid4()))
 
 
@@ -32,5 +32,5 @@ class Order:
             "user_id": self.user_id,
             "product_id": self.product_id,
             "status": self.status,
-            "created_at": self.created_at,
+            "created_at": self.created_at.isoformat(),
         }

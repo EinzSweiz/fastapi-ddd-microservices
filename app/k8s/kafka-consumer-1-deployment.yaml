@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-consumer-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-consumer-1
+  template:
+    metadata:
+      labels:
+        app: kafka-consumer-1
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: kafka-consumer
+        image: raidsulin/fastapi-app:latest
+        command: ["python", "app/kafka_consumer_inventory_main.py"]
+        env:
+        - name: KAFKA_BROKER
+          value: kafka-service  # Use service name as DNS for Kafka
+        - name: REDIS_HOST
+          value: redis-node-0-service  # Use service name as DNS for Redis
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-consumer-1-service
+spec:
+  selector:
+    app: kafka-consumer-1
+  ports:
+    - protocol: TCP
+      name: 'http'
+      port: 5000
+      targetPort: 5000
+

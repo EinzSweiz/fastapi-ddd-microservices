@@ -8,7 +8,7 @@ class KafkaProducerService:
     def __init__(self):
         self.producer: Producer = Producer({
             'bootstrap.servers': 'kafka:9092',
-            'client.id': 'inventory-service'
+            'client.id': 'backend-service'
         })
 
     def delivery_report(self, err: Optional[Exception], msg: Message) -> None:

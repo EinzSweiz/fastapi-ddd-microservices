@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-admin
+  template:
+    metadata:
+      labels:
+        app: kafka-admin
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: kafka-topic-admin
+        image: raidsulin/fastapi-app:latest
+        command: ["python", "app/kafka_admin.py"]
+        env:
+        - name: KAFKA_BROKER
+          value: kafka-service
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-admin-service
+spec:
+  selector:
+    app: kafka-admin
+  ports:
+    - protocol: TCP
+      name: 'http'
+      port: 5000
+      targetPort: 5000
+

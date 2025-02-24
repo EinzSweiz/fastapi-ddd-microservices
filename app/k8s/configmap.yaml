@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-env
+data:
+  KAFKA_BROKER: "kafka:9092"
+  REDIS_CLUSTER_ENABLED: "yes"
+  REDIS_CLUSTER_CONFIG_FILE: "/data/nodes.conf"
+  REDIS_CLUSTER_NODE_TIMEOUT: "5000"
